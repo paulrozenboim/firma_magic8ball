@@ -14,9 +14,7 @@
     font:16px/1.4 "Alef", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
     background: radial-gradient(120% 100% at 50% 0%, #1a1a1a 0%, #0b0b0b 55%, #000 100%);
     position:relative; overflow-x:hidden;
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-left: env(safe-area-inset-left, 0px);
-    padding-right: env(safe-area-inset-right, 0px);
+    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
   }
 
   /* Noise */
@@ -36,21 +34,19 @@
 
   .wrap{min-height:100%; position:relative; display:grid; grid-template-rows:1fr auto; z-index:1}
 
-  /* Logos (pinned regardless of language) */
-  .logo{
-    position:fixed; top:24px; height:auto; z-index:3; user-select:none;
-    filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));
-  }
+  /* Logos (pinned the same in LTR/RTL) */
+  .logo{position:fixed; top:24px; height:auto; z-index:3; user-select:none; filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));}
   .logo.left{ left:20px; width:40px; }
-  .logo.right{ right:20px; width:120px; cursor:pointer; } /* smaller */
+  .logo.right{ right:20px; width:120px; cursor:pointer; }
+  [dir="rtl"] .logo.left{ left:20px; }      /* explicit so RTL doesn't mirror them */
+  [dir="rtl"] .logo.right{ right:20px; }
 
-  /* Language toggle – slimmer, centered, below logos */
+  /* Language toggle – centered below logos */
   .lang-toggle{
     position:fixed; left:50%; top:66px; transform:translateX(-50%);
     z-index:4; display:flex; gap:.25rem; align-items:center;
     background:rgba(255,255,255,0.05); backdrop-filter:blur(5px);
-    border-radius:999px; padding:.25rem .4rem;
-    outline:1px solid rgba(255,255,255,.12);
+    border-radius:999px; padding:.25rem .4rem; outline:1px solid rgba(255,255,255,.12);
     font-size:13px;
   }
   .lang-toggle button{
@@ -95,50 +91,47 @@
   /* Controls */
   .controls{
     display:grid; grid-template-columns:1fr auto auto; gap:.6rem;
-    padding:1rem clamp(1rem,5vw,3rem) 1.5rem; align-items:center;
+    padding:1rem clamp(1rem,5vw,3rem) 1.2rem; align-items:center;
   }
   .question{
-    font-family:"Alef",sans-serif; font-size:1rem;       /* smaller */
-    padding:.7rem 1rem;                                   /* smaller */
-    border-radius:20px; border:0; outline:2px solid #fff; background:#fff; color:#111;
+    font-family:"Alef",sans-serif; font-size:.95rem;     /* smaller */
+    padding:.6rem .9rem;                                  /* smaller */
+    border-radius:16px; border:0; outline:2px solid #fff; background:#fff; color:#111;
   }
   [dir="rtl"] .question{ text-align:right; }
   .btn{
     font-family:"Alef",sans-serif; font-weight:700;
-    font-size:.98rem; padding:.7rem 1rem; border-radius:20px; border:0; cursor:pointer;
+    font-size:.95rem; padding:.65rem .95rem; border-radius:16px; border:0; cursor:pointer;
     background:#111; color:#fff; outline:1px solid rgba(255,255,255,.15);
     transition:transform .12s ease, outline-color .2s ease, background .2s ease;
   }
   .btn.primary{ background:#1b59ff; } .btn:disabled{ opacity:.45; cursor:not-allowed; }
   .btn:hover:not(:disabled){ transform:translateY(-1px); }
 
-  /* -------------------- Mobile tweaks -------------------- */
+  /* Mobile */
   @media (max-width: 640px){
     .logo.left{ left:14px; top:14px; width:36px; }
-    .logo.right{ right:14px; top:14px; width:96px; }     /* smaller on phones */
+    .logo.right{ right:14px; top:14px; width:96px; }
     .lang-toggle{ top:58px; font-size:12px; padding:.2rem .35rem; gap:.2rem; }
 
-    .stage{ padding-top: clamp(80px, 14vh, 120px); }
+    .stage{ padding-top: clamp(78px, 14vh, 120px); }
     .ball-stack{ width:min(58vh, 92vw); }
-    .answer{ width:52%; padding:4.5%; }                   /* more room on phones */
+    .answer{ width:52%; padding:4.5%; }
 
     .controls{
       grid-template-columns: 1fr;
-      grid-auto-rows: auto;
       gap:.5rem;
-      padding: .75rem clamp(12px, 5vw, 24px) 1.2rem;
+      padding:.7rem clamp(12px, 5vw, 24px) 1rem;
     }
-    .question{ width:100%; font-size:.98rem; padding:.8rem 1rem; border-radius:18px; }
-    .btn{ width:100%; padding:.9rem 1rem; font-size:1rem; border-radius:18px; }
+    .question{ width:100%; font-size:.94rem; padding:.7rem .9rem; border-radius:15px; }
+    .btn{ width:100%; padding:.85rem 1rem; font-size:.98rem; border-radius:16px; }
   }
 </style>
 </head>
 <body>
-  <!-- Logos -->
   <img src="logo_f.svg" alt="F" class="logo left" />
   <img id="exportLogo" src="logo_night.svg" alt="Unknown Night (Export Log)" class="logo right" title="Download Q&A log" />
 
-  <!-- Language toggle (centered) -->
   <div class="lang-toggle" aria-label="Language">
     <button type="button" data-lang="en" class="active">EN</button>
     <button type="button" data-lang="he">עברית</button>
@@ -164,7 +157,7 @@
 
 <script>
 (()=>{
-  /* -------- Noise texture -------- */
+  /* Noise */
   (function makeNoise(){
     try{
       const c=document.createElement('canvas'),s=240; c.width=c.height=s;
@@ -178,7 +171,7 @@
     }catch(e){}
   })();
 
-  /* -------- i18n -------- */
+  /* i18n */
   const STRINGS={
     en:{ askPlaceholder:"Ask a yes or no question…", shake:"Shake", askAgain:"Ask again", reset:"Reset",
       answers:[
@@ -211,7 +204,6 @@
   const questionEl=$("#question"), shakeBtn=$("#shakeBtn"), resetBtn=$("#resetBtn");
   const exportLogo=$("#exportLogo");
 
-  // centered lang toggle
   document.querySelector('.lang-toggle').addEventListener('click',e=>{
     const btn=e.target.closest('button[data-lang]'); if(!btn) return;
     setLang(btn.dataset.lang);
@@ -233,8 +225,9 @@
     }
   }
 
-  /* ---------- Fit helpers ---------- */
+  /* Fit helpers */
   function escapeHTML(s){ return s.replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m])); }
+
   function wrapWords(text, maxPerLine){
     const words=text.split(/\s+/), lines=[]; let line="";
     for(const w of words){
@@ -245,19 +238,32 @@
     if(line) lines.push(line);
     return lines.join("\n");
   }
+
   function prepareText(raw){
     const special = SPECIAL_WRAP[lang] && SPECIAL_WRAP[lang][raw];
     if (special) return special;
+
+    // Hebrew: force one word per line, also split on slashes/dashes
+    if (lang === "he") {
+      return raw
+        .split(/\s+/)
+        .flatMap(w => w.split(/[\/–\-]+/))
+        .filter(Boolean)
+        .join("\n");
+    }
+
+    // English: heuristic wrapping for long strings
     const len=raw.length;
-    if(len>28) return wrapWords(raw, lang==="he"?10:11);
-    if(len>18) return wrapWords(raw, lang==="he"?12:13);
+    if(len>28) return wrapWords(raw, 11);
+    if(len>18) return wrapWords(raw, 13);
     return raw;
   }
+
   function fitTextUntilItFits(el){
     const cs = getComputedStyle(el);
     let size = parseFloat(cs.fontSize);
     el.style.fontSize = size + "px";
-    let tries = 14;
+    let tries = 16;
     while (tries-- && (el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth)) {
       size *= 0.92;
       el.style.fontSize = size + "px";
@@ -271,7 +277,7 @@
     answerEl.style.fontSize = "";
     answerEl.classList.add("large");
     fitTextUntilItFits(answerEl);
-    void answerEl.offsetWidth; /* reflow for fade */
+    void answerEl.offsetWidth; // fade replay
     answerEl.classList.add("show");
     answerEl.setAttribute('aria-label', text);
     answerEl.dataset.idx = idx!==null ? String(idx) : "";
@@ -282,7 +288,7 @@
     answerEl.style.fontSize = "";
   }
 
-  /* ---------- Flow + logging ---------- */
+  /* Flow + logging */
   let isBusy=false, answeredOnce=false;
   const LOG_KEY="eightball_log_v1"; let log=[];
   try{ log=JSON.parse(localStorage.getItem(LOG_KEY)||"[]"); }catch{}
@@ -296,10 +302,8 @@
     if(!q){ questionEl.focus(); return; }
     isBusy=true;
 
-    // prevent scroll jump on mobile
-    const y = window.scrollY;
-
-    questionEl.blur();                // close keyboard & avoid scroll dance
+    const y = window.scrollY;       // prevent jump
+    questionEl.blur();
     shakeBtn.disabled = true;
     resetBtn.disabled = true;
 
@@ -318,8 +322,6 @@
 
     shakeBtn.disabled = false;
     isBusy=false;
-
-    // restore scroll position
     window.scrollTo({ top: y });
   }
 
