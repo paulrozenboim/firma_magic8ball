@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Magic 8-Ball (SVG layers)</title>
+<title>Magic 8-Ball - Firma Unknown Night</title>
 <link href="https://fonts.googleapis.com/css2?family=Alef:wght@400;700&display=swap" rel="stylesheet"/>
 
 <style>
@@ -17,34 +17,39 @@
     padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
   }
 
-  /* Noise */
+  /* subtle noise */
   body::before{
     content:""; position:fixed; inset:-20% -20% -20% -20%; pointer-events:none;
     opacity:.09; mix-blend-mode:overlay; background-size:240px 240px;
     animation:grain 8s steps(10) infinite; z-index:0;
   }
   @keyframes grain{
-    0%{transform:translate3d(0,0,0)} 10%{transform:translate3d(-5%,-8%,0)}
-    20%{transform:translate3d(6%,-2%,0)} 30%{transform:translate3d(-3%,6%,0)}
-    40%{transform:translate3d(8%,4%,0)} 50%{transform:translate3d(-6%,2%,0)}
-    60%{transform:translate3d(4%,-6%,0)} 70%{transform:translate3d(-8%,-4%,0)}
-    80%{transform:translate3d(2%,6%,0)} 90%{transform:translate3d(-4%,2%,0)}
+    0%{transform:translate3d(0,0,0)}10%{transform:translate3d(-5%,-8%,0)}
+    20%{transform:translate3d(6%,-2%,0)}30%{transform:translate3d(-3%,6%,0)}
+    40%{transform:translate3d(8%,4%,0)}50%{transform:translate3d(-6%,2%,0)}
+    60%{transform:translate3d(4%,-6%,0)}70%{transform:translate3d(-8%,-4%,0)}
+    80%{transform:translate3d(2%,6%,0)}90%{transform:translate3d(-4%,2%,0)}
     100%{transform:translate3d(0,0,0)}
   }
 
-  .wrap{min-height:100%; position:relative; display:grid; grid-template-rows:1fr auto; z-index:1}
+  .wrap{min-height:100%; display:grid; grid-template-rows:1fr auto; z-index:1}
 
-  /* Logos (pinned the same in LTR/RTL) */
-  .logo{position:fixed; top:24px; height:auto; z-index:3; user-select:none; filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));}
+  /* LOGOS — fixed, never move */
+  .logo{
+    position:fixed; top:24px; height:auto; z-index:5; user-select:none;
+    filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));
+    pointer-events:auto;
+  }
   .logo.left{ left:20px; width:40px; }
   .logo.right{ right:20px; width:120px; cursor:pointer; }
-  [dir="rtl"] .logo.left{ left:20px; }      /* explicit so RTL doesn't mirror them */
+  /* keep the exact same positions in RTL (no mirroring) */
+  [dir="rtl"] .logo.left{ left:20px; }
   [dir="rtl"] .logo.right{ right:20px; }
 
-  /* Language toggle – centered below logos */
+  /* language toggle — centered, slim, below logos */
   .lang-toggle{
     position:fixed; left:50%; top:66px; transform:translateX(-50%);
-    z-index:4; display:flex; gap:.25rem; align-items:center;
+    z-index:6; display:flex; gap:.25rem; align-items:center;
     background:rgba(255,255,255,0.05); backdrop-filter:blur(5px);
     border-radius:999px; padding:.25rem .4rem; outline:1px solid rgba(255,255,255,.12);
     font-size:13px;
@@ -55,17 +60,17 @@
   }
   .lang-toggle button.active{ background:rgba(255,255,255,.12); }
 
-  /* Stage */
-  .stage{ position:relative; display:grid; place-items:center; padding:clamp(20px,6vw,60px); }
+  /* stage */
+  .stage{ display:grid; place-items:center; padding:clamp(20px,6vw,60px); }
   .ball-stack{ position:relative; width:min(62vh,64vw); aspect-ratio:1/1; }
-  .ball-stack>*{ position:absolute; inset:0; display:block; width:100%; height:100%; object-fit:contain; pointer-events:none;}
+  .ball-stack>*{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; pointer-events:none;}
   .ball-front{ z-index:3; } .answer-wrap{ z-index:2; display:grid; place-items:center; }
   .ball-back{ z-index:1; filter:drop-shadow(0 20px 30px rgba(0,0,0,.55)); }
 
   .answer{
     width:46%; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center;
     text-align:center; margin:auto; border-radius:50%;
-    background: radial-gradient(50% 50% at 50% 38%, rgba(18,32,110,0.35) 0%, rgba(0,0,0,0) 70%);
+    background:radial-gradient(50% 50% at 50% 38%,rgba(18,32,110,0.35) 0%, rgba(0,0,0,0) 70%);
     color:#eaf0ff; font-weight:700; line-height:1.18; padding:3.5%; transform:translateY(2%);
     text-shadow:0 0 6px rgba(40,100,255,.35); white-space:pre-line; opacity:0;
   }
@@ -75,41 +80,42 @@
   .answer.hidden { opacity:0; }
   .answer.show   { animation: fadeIn .35s ease-out forwards; }
   @keyframes fadeIn{ from{opacity:0; transform:translateY(2%) scale(.985);} to{opacity:1; transform:translateY(2%) scale(1);} }
+  [dir="rtl"] .answer{ direction:rtl; } /* make Hebrew align correctly */
 
-  /* Shake */
+  /* shake */
   @keyframes shake{
-    0%{ transform:translate(0,0) rotate(0deg) }
-    15%{ transform:translate(-2%,-1%) rotate(-2deg) }
-    30%{ transform:translate(1%,2%) rotate(2deg) }
-    45%{ transform:translate(-1%,1%) rotate(-1.2deg) }
-    60%{ transform:translate(1.4%,-1.2%) rotate(1.6deg) }
-    75%{ transform:translate(-.8%,.6%) rotate(-1deg) }
-    100%{ transform:translate(0,0) rotate(0deg) }
+    0%{transform:translate(0,0) rotate(0)}15%{transform:translate(-2%,-1%) rotate(-2deg)}
+    30%{transform:translate(1%,2%) rotate(2deg)}45%{transform:translate(-1%,1%) rotate(-1.2deg)}
+    60%{transform:translate(1.4%,-1.2%) rotate(1.6deg)}75%{transform:translate(-.8%,.6%) rotate(-1deg)}
+    100%{transform:translate(0,0) rotate(0)}
   }
   .shaking .ball-stack{ animation:shake .8s ease-in-out both; }
 
-  /* Controls */
+  /* controls */
   .controls{
-    display:grid; grid-template-columns:1fr auto auto; gap:.6rem;
-    padding:1rem clamp(1rem,5vw,3rem) 1.2rem; align-items:center;
+    display:grid; grid-template-columns:1fr auto auto; align-items:center;
+    gap:.6rem; padding:1rem clamp(1rem,5vw,3rem) 1.2rem;
+    place-items:center; /* center children so the 90% rule is easy */
   }
   .question{
-    font-family:"Alef",sans-serif; font-size:.95rem;     /* smaller */
-    padding:.6rem .9rem;                                  /* smaller */
-    border-radius:16px; border:0; outline:2px solid #fff; background:#fff; color:#111;
+    font-family:"Alef",sans-serif; font-size:.95rem;
+    padding:.6rem .9rem; border-radius:16px; border:0; outline:2px solid #fff;
+    background:#fff; color:#111;
+    width:90%; max-width:720px; /* <- 90% width requested */
+    justify-self:center;
   }
   [dir="rtl"] .question{ text-align:right; }
   .btn{
-    font-family:"Alef",sans-serif; font-weight:700;
-    font-size:.95rem; padding:.65rem .95rem; border-radius:16px; border:0; cursor:pointer;
+    font-family:"Alef",sans-serif; font-weight:700; font-size:.95rem;
+    padding:.65rem .95rem; border-radius:16px; border:0; cursor:pointer;
     background:#111; color:#fff; outline:1px solid rgba(255,255,255,.15);
     transition:transform .12s ease, outline-color .2s ease, background .2s ease;
   }
   .btn.primary{ background:#1b59ff; } .btn:disabled{ opacity:.45; cursor:not-allowed; }
   .btn:hover:not(:disabled){ transform:translateY(-1px); }
 
-  /* Mobile */
-  @media (max-width: 640px){
+  /* mobile */
+  @media (max-width:640px){
     .logo.left{ left:14px; top:14px; width:36px; }
     .logo.right{ right:14px; top:14px; width:96px; }
     .lang-toggle{ top:58px; font-size:12px; padding:.2rem .35rem; gap:.2rem; }
@@ -119,19 +125,20 @@
     .answer{ width:52%; padding:4.5%; }
 
     .controls{
-      grid-template-columns: 1fr;
-      gap:.5rem;
+      grid-template-columns:1fr; gap:.5rem;
       padding:.7rem clamp(12px, 5vw, 24px) 1rem;
     }
-    .question{ width:100%; font-size:.94rem; padding:.7rem .9rem; border-radius:15px; }
-    .btn{ width:100%; padding:.85rem 1rem; font-size:.98rem; border-radius:16px; }
+    .question{ width:90%; max-width:none; font-size:.94rem; padding:.7rem .9rem; border-radius:15px; }
+    .btn{ width:90%; padding:.85rem 1rem; font-size:.98rem; border-radius:16px; }
   }
 </style>
 </head>
 <body>
+  <!-- logos (pinned) -->
   <img src="logo_f.svg" alt="F" class="logo left" />
   <img id="exportLogo" src="logo_night.svg" alt="Unknown Night (Export Log)" class="logo right" title="Download Q&A log" />
 
+  <!-- language toggle -->
   <div class="lang-toggle" aria-label="Language">
     <button type="button" data-lang="en" class="active">EN</button>
     <button type="button" data-lang="he">עברית</button>
@@ -157,7 +164,7 @@
 
 <script>
 (()=>{
-  /* Noise */
+  /* noise bitmap */
   (function makeNoise(){
     try{
       const c=document.createElement('canvas'),s=240; c.width=c.height=s;
@@ -174,28 +181,13 @@
   /* i18n */
   const STRINGS={
     en:{ askPlaceholder:"Ask a yes or no question…", shake:"Shake", askAgain:"Ask again", reset:"Reset",
-      answers:[
-        "It is certain","Without a doubt","You may rely on it","Yes – definitely",
-        "Most likely","Outlook good","Signs point to yes","Yes",
-        "Reply hazy, try again","Ask again later","Better not tell you now",
-        "Cannot predict now","Concentrate and ask again",
-        "Don’t count on it","My reply is no","Outlook not so good",
-        "Very doubtful","Absolutely not","Only if you act","If you really want it"
-      ]},
+      answers:["It is certain","Without a doubt","You may rely on it","Yes – definitely","Most likely","Outlook good","Signs point to yes","Yes","Reply hazy, try again","Ask again later","Better not tell you now","Cannot predict now","Concentrate and ask again","Don’t count on it","My reply is no","Outlook not so good","Very doubtful","Absolutely not","Only if you act","If you really want it"]},
     he:{ askPlaceholder:"שאל/י שאלה של כן או לא…", shake:"נער/י", askAgain:"שאל/י שוב", reset:"איפוס",
-      answers:[
-        "בטוח לגמרי","ללא ספק","אפשר לסמוך על זה","כן – בהחלט",
-        "כנראה שכן","נראה מבטיח","הסימנים מצביעים על כן","כן",
-        "התשובה מעורפלת, נסה שוב","שאל שוב מאוחר יותר","עדיף לא לגלות עכשיו",
-        "אי אפשר לנבא עכשיו","התמקד/י ושאל/י שוב",
-        "אל תסמוך על זה","התשובה שלי היא לא","לא נראה מבטיח",
-        "בספק רב","ממש לא","רק אם תפעל/י","אם באמת תרצה/י – כן"
-      ]}
+      answers:["בטוח לגמרי","ללא ספק","אפשר לסמוך על זה","כן – בהחלט","כנראה שכן","נראה מבטיח","הסימנים מצביעים על כן","כן","התשובה מעורפלת, נסה שוב","שאל שוב מאוחר יותר","עדיף לא לגלות עכשיו","אי אפשר לנבא עכשיו","התמקד/י ושאל/י שוב","אל תסמוך על זה","התשובה שלי היא לא","לא נראה מבטיח","בספק רב","ממש לא","רק אם תפעל/י","אם באמת תרצה/י – כן"]}
   };
-
   const SPECIAL_WRAP={
     en:{ "Concentrate and ask again":"Concentrate\nand ask\nagain" },
-    he:{ "התשובה מעורפלת, נסה שוב":"התשובה מעורפלת,\nנסה שוב" }
+    he:{ "התשובה מעורפלת, נסה שוב":"התשובה\nמעורפלת,\nנסה\nשוב" }
   };
 
   let lang="en";
@@ -205,8 +197,7 @@
   const exportLogo=$("#exportLogo");
 
   document.querySelector('.lang-toggle').addEventListener('click',e=>{
-    const btn=e.target.closest('button[data-lang]'); if(!btn) return;
-    setLang(btn.dataset.lang);
+    const btn=e.target.closest('button[data-lang]'); if(!btn) return; setLang(btn.dataset.lang);
   });
 
   function setLang(next){
@@ -217,56 +208,41 @@
     questionEl.placeholder=STRINGS[lang].askPlaceholder;
     shakeBtn.textContent = answeredOnce ? STRINGS[lang].askAgain : STRINGS[lang].shake;
     resetBtn.textContent = STRINGS[lang].reset;
-    document.querySelectorAll('.lang-toggle button')
-      .forEach(b=>b.classList.toggle('active', b.dataset.lang===next));
+    document.querySelectorAll('.lang-toggle button').forEach(b=>b.classList.toggle('active', b.dataset.lang===next));
     if(answerEl.dataset.idx!==""){
       const idx=Number(answerEl.dataset.idx), pool=STRINGS[lang].answers;
       if(!Number.isNaN(idx)&&pool[idx]) setAnswer(pool[idx], idx);
     }
   }
 
-  /* Fit helpers */
+  /* helpers */
   function escapeHTML(s){ return s.replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m])); }
-
-  function wrapWords(text, maxPerLine){
-    const words=text.split(/\s+/), lines=[]; let line="";
-    for(const w of words){
-      const cand=line?line+" "+w:w;
-      if(cand.replace(/\W/g,"").length>maxPerLine){ if(line) lines.push(line); line=w; }
-      else line=cand;
-    }
-    if(line) lines.push(line);
-    return lines.join("\n");
-  }
 
   function prepareText(raw){
     const special = SPECIAL_WRAP[lang] && SPECIAL_WRAP[lang][raw];
     if (special) return special;
 
-    // Hebrew: force one word per line, also split on slashes/dashes
     if (lang === "he") {
-      return raw
-        .split(/\s+/)
-        .flatMap(w => w.split(/[\/–\-]+/))
-        .filter(Boolean)
-        .join("\n");
+      // force one word per line; also split on / and dashes
+      return raw.split(/\s+/).flatMap(w=>w.split(/[\/–\-]+/)).filter(Boolean).join("\n");
     }
-
-    // English: heuristic wrapping for long strings
-    const len=raw.length;
-    if(len>28) return wrapWords(raw, 11);
-    if(len>18) return wrapWords(raw, 13);
-    return raw;
+    // English: soft wrap by words for long strings
+    const words=raw.split(/\s+/); const lines=[]; let line="";
+    const max= raw.length>28 ? 11 : (raw.length>18 ? 13 : 99);
+    for(const w of words){
+      const nx=line?line+" "+w:w;
+      if(nx.replace(/\W/g,"").length>max){ if(line) lines.push(line); line=w; } else line=nx;
+    }
+    if(line) lines.push(line);
+    return lines.join("\n");
   }
 
   function fitTextUntilItFits(el){
-    const cs = getComputedStyle(el);
-    let size = parseFloat(cs.fontSize);
-    el.style.fontSize = size + "px";
-    let tries = 16;
-    while (tries-- && (el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth)) {
-      size *= 0.92;
-      el.style.fontSize = size + "px";
+    const cs=getComputedStyle(el); let size=parseFloat(cs.fontSize);
+    el.style.fontSize=size+"px";
+    let tries=16;
+    while(tries-- && (el.scrollHeight>el.clientHeight || el.scrollWidth>el.clientWidth)){
+      size*=0.92; el.style.fontSize=size+"px";
     }
   }
 
@@ -274,60 +250,41 @@
     answerEl.className="answer";
     const wrapped=prepareText(text);
     answerEl.innerHTML = escapeHTML(wrapped).replace(/\n/g,"<br>");
-    answerEl.style.fontSize = "";
-    answerEl.classList.add("large");
+    answerEl.style.fontSize=""; answerEl.classList.add("large");
     fitTextUntilItFits(answerEl);
-    void answerEl.offsetWidth; // fade replay
-    answerEl.classList.add("show");
+    void answerEl.offsetWidth; answerEl.classList.add("show");
     answerEl.setAttribute('aria-label', text);
     answerEl.dataset.idx = idx!==null ? String(idx) : "";
   }
   function clearAnswer(){
-    answerEl.className="answer hidden";
-    answerEl.textContent=""; answerEl.dataset.idx="";
-    answerEl.style.fontSize = "";
+    answerEl.className="answer hidden"; answerEl.textContent=""; answerEl.dataset.idx=""; answerEl.style.fontSize="";
   }
 
-  /* Flow + logging */
+  /* flow + logging */
   let isBusy=false, answeredOnce=false;
-  const LOG_KEY="eightball_log_v1"; let log=[];
-  try{ log=JSON.parse(localStorage.getItem(LOG_KEY)||"[]"); }catch{}
+  const LOG_KEY="eightball_log_v1"; let log=[]; try{ log=JSON.parse(localStorage.getItem(LOG_KEY)||"[]"); }catch{}
 
   function addLog(q,a,lg){ const e={ts:new Date().toISOString(),lang:lg,question:q,answer:a};
     log.push(e); localStorage.setItem(LOG_KEY, JSON.stringify(log)); }
 
   async function shakeAndAnswer(){
     if(isBusy) return;
-    const q=questionEl.value.trim();
-    if(!q){ questionEl.focus(); return; }
+    const q=questionEl.value.trim(); if(!q){ questionEl.focus(); return; }
     isBusy=true;
 
-    const y = window.scrollY;       // prevent jump
-    questionEl.blur();
-    shakeBtn.disabled = true;
-    resetBtn.disabled = true;
-
+    const y=window.scrollY; questionEl.blur(); shakeBtn.disabled=true; resetBtn.disabled=true;
     clearAnswer(); stage.classList.add('shaking');
     await new Promise(r=>setTimeout(r,880));
-
-    const pool=STRINGS[lang].answers;
-    const idx=Math.floor(Math.random()*pool.length);
-    const ans=pool[idx];
+    const pool=STRINGS[lang].answers; const idx=Math.floor(Math.random()*pool.length); const ans=pool[idx];
     setAnswer(ans, idx); addLog(q, ans, lang);
-
-    await new Promise(r=>setTimeout(r,120));
-    stage.classList.remove('shaking');
+    await new Promise(r=>setTimeout(r,120)); stage.classList.remove('shaking');
 
     answeredOnce=true; shakeBtn.textContent=STRINGS[lang].askAgain; resetBtn.disabled=false;
-
-    shakeBtn.disabled = false;
-    isBusy=false;
-    window.scrollTo({ top: y });
+    shakeBtn.disabled=false; isBusy=false; window.scrollTo({top:y});
   }
 
   function resetAll(){
-    if(isBusy) return;
-    questionEl.value=""; clearAnswer(); answeredOnce=false;
+    if(isBusy) return; questionEl.value=""; clearAnswer(); answeredOnce=false;
     shakeBtn.textContent=STRINGS[lang].shake; resetBtn.disabled=true;
   }
 
@@ -335,16 +292,14 @@
   resetBtn.addEventListener('click', resetAll);
   document.addEventListener('keydown', e=>{ if(e.key==="Escape") resetAll(); });
 
-  // Right logo = export CSV
+  // export via right logo
   exportLogo.addEventListener('click', ()=>{
     if(!log.length) return;
-    const rows=[["timestamp","lang","question","answer"]]
-      .concat(log.map(r=>[r.ts,r.lang,r.question,r.answer]));
+    const rows=[["timestamp","lang","question","answer"]].concat(log.map(r=>[r.ts,r.lang,r.question,r.answer]));
     const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\r\n");
     const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
-    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-    a.download="magic-8-ball_log.csv"; document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download="magic-8-ball_log.csv";
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),5000);
   });
 
   // init
