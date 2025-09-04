@@ -4,7 +4,6 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Magic 8-Ball (SVG layers)</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Alef:wght@400;700&display=swap" rel="stylesheet"/>
 
 <style>
@@ -37,21 +36,25 @@
 
   .wrap{min-height:100%; position:relative; display:grid; grid-template-rows:1fr auto; z-index:1}
 
-  /* Logos */
-  .logo{position:fixed; top:28px; width:44px; height:auto; z-index:3;
-        filter:drop-shadow(0 2px 6px rgba(0,0,0,.4)); user-select:none;}
-  .logo.left{ left:28px; }
-  .logo.right{ right:28px; width:160px; cursor:pointer; }
+  /* Logos (pinned regardless of language) */
+  .logo{
+    position:fixed; top:24px; height:auto; z-index:3; user-select:none;
+    filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));
+  }
+  .logo.left{ left:20px; width:40px; }
+  .logo.right{ right:20px; width:120px; cursor:pointer; } /* smaller */
 
-  /* Lang toggle centered top */
+  /* Language toggle – slimmer, centered, below logos */
   .lang-toggle{
-    position:fixed; left:50%; top:24px; transform:translateX(-50%); z-index:4;
-    display:flex; gap:.4rem; align-items:center;
+    position:fixed; left:50%; top:66px; transform:translateX(-50%);
+    z-index:4; display:flex; gap:.25rem; align-items:center;
     background:rgba(255,255,255,0.05); backdrop-filter:blur(5px);
-    border-radius:999px; padding:.35rem .55rem; outline:1px solid rgba(255,255,255,.12);
+    border-radius:999px; padding:.25rem .4rem;
+    outline:1px solid rgba(255,255,255,.12);
+    font-size:13px;
   }
   .lang-toggle button{
-    background:transparent; color:var(--fg); border:0; padding:.25rem .6rem;
+    background:transparent; color:var(--fg); border:0; padding:.2rem .5rem;
     cursor:pointer; border-radius:999px; font-weight:700; font-family:"Alef",sans-serif;
   }
   .lang-toggle button.active{ background:rgba(255,255,255,.12); }
@@ -67,12 +70,12 @@
     width:46%; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center;
     text-align:center; margin:auto; border-radius:50%;
     background: radial-gradient(50% 50% at 50% 38%, rgba(18,32,110,0.35) 0%, rgba(0,0,0,0) 70%);
-    color:#eaf0ff; font-weight:700; line-height:1.18; padding:4%; transform:translateY(2%);
+    color:#eaf0ff; font-weight:700; line-height:1.18; padding:3.5%; transform:translateY(2%);
     text-shadow:0 0 6px rgba(40,100,255,.35); white-space:pre-line; opacity:0;
   }
-  .answer.small  { font-size: clamp(12px, 1.3vw, 18px); }
-  .answer.medium { font-size: clamp(13px, 1.7vw, 22px); }
-  .answer.large  { font-size: clamp(14px, 2vw, 26px); }
+  .answer.small  { font-size: clamp(12px, 1.25vw, 18px); }
+  .answer.medium { font-size: clamp(13px, 1.6vw, 21px); }
+  .answer.large  { font-size: clamp(14px, 1.9vw, 24px); }
   .answer.hidden { opacity:0; }
   .answer.show   { animation: fadeIn .35s ease-out forwards; }
   @keyframes fadeIn{ from{opacity:0; transform:translateY(2%) scale(.985);} to{opacity:1; transform:translateY(2%) scale(1);} }
@@ -92,16 +95,17 @@
   /* Controls */
   .controls{
     display:grid; grid-template-columns:1fr auto auto; gap:.6rem;
-    padding:1rem clamp(1rem,5vw,3rem) 2rem; align-items:center;
+    padding:1rem clamp(1rem,5vw,3rem) 1.5rem; align-items:center;
   }
   .question{
-    font-family:"Alef",sans-serif; font-size:1.05rem; padding:.9rem 1.1rem;
-    border-radius:999px; border:0; outline:2px solid #fff; background:#fff; color:#111;
+    font-family:"Alef",sans-serif; font-size:1rem;       /* smaller */
+    padding:.7rem 1rem;                                   /* smaller */
+    border-radius:20px; border:0; outline:2px solid #fff; background:#fff; color:#111;
   }
   [dir="rtl"] .question{ text-align:right; }
   .btn{
     font-family:"Alef",sans-serif; font-weight:700;
-    font-size:1.02rem; padding:.9rem 1.15rem; border-radius:999px; border:0; cursor:pointer;
+    font-size:.98rem; padding:.7rem 1rem; border-radius:20px; border:0; cursor:pointer;
     background:#111; color:#fff; outline:1px solid rgba(255,255,255,.15);
     transition:transform .12s ease, outline-color .2s ease, background .2s ease;
   }
@@ -110,13 +114,13 @@
 
   /* -------------------- Mobile tweaks -------------------- */
   @media (max-width: 640px){
-    .logo{ top:16px; }
-    .logo.left{ left:16px; }
-    .logo.right{ right:16px; width:130px; }
-    .lang-toggle{ top:68px; padding:.35rem .6rem; }
-    .stage{ padding-top: clamp(84px, 14vh, 120px); }
+    .logo.left{ left:14px; top:14px; width:36px; }
+    .logo.right{ right:14px; top:14px; width:96px; }     /* smaller on phones */
+    .lang-toggle{ top:58px; font-size:12px; padding:.2rem .35rem; gap:.2rem; }
+
+    .stage{ padding-top: clamp(80px, 14vh, 120px); }
     .ball-stack{ width:min(58vh, 92vw); }
-    .answer{ width:54%; padding:5%; } /* give text a bit more room on phones */
+    .answer{ width:52%; padding:4.5%; }                   /* more room on phones */
 
     .controls{
       grid-template-columns: 1fr;
@@ -124,8 +128,8 @@
       gap:.5rem;
       padding: .75rem clamp(12px, 5vw, 24px) 1.2rem;
     }
-    .question{ width:100%; font-size:1rem; padding:1rem 1.1rem; }
-    .btn{ width:100%; padding:1rem 1.1rem; font-size:1.05rem; }
+    .question{ width:100%; font-size:.98rem; padding:.8rem 1rem; border-radius:18px; }
+    .btn{ width:100%; padding:.9rem 1rem; font-size:1rem; border-radius:18px; }
   }
 </style>
 </head>
@@ -264,10 +268,10 @@
     answerEl.className="answer";
     const wrapped=prepareText(text);
     answerEl.innerHTML = escapeHTML(wrapped).replace(/\n/g,"<br>");
-    answerEl.style.fontSize = ""; // clear inline
+    answerEl.style.fontSize = "";
     answerEl.classList.add("large");
     fitTextUntilItFits(answerEl);
-    void answerEl.offsetWidth; // reflow for fade
+    void answerEl.offsetWidth; /* reflow for fade */
     answerEl.classList.add("show");
     answerEl.setAttribute('aria-label', text);
     answerEl.dataset.idx = idx!==null ? String(idx) : "";
@@ -292,7 +296,10 @@
     if(!q){ questionEl.focus(); return; }
     isBusy=true;
 
-    questionEl.readOnly = true;  // keep value visible on mobile
+    // prevent scroll jump on mobile
+    const y = window.scrollY;
+
+    questionEl.blur();                // close keyboard & avoid scroll dance
     shakeBtn.disabled = true;
     resetBtn.disabled = true;
 
@@ -309,16 +316,17 @@
 
     answeredOnce=true; shakeBtn.textContent=STRINGS[lang].askAgain; resetBtn.disabled=false;
 
-    questionEl.readOnly = false;
     shakeBtn.disabled = false;
     isBusy=false;
-    questionEl.select();
+
+    // restore scroll position
+    window.scrollTo({ top: y });
   }
 
   function resetAll(){
     if(isBusy) return;
     questionEl.value=""; clearAnswer(); answeredOnce=false;
-    shakeBtn.textContent=STRINGS[lang].shake; resetBtn.disabled=true; questionEl.focus();
+    shakeBtn.textContent=STRINGS[lang].shake; resetBtn.disabled=true;
   }
 
   form.addEventListener('submit', e=>{ e.preventDefault(); shakeAndAnswer(); });
